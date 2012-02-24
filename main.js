@@ -496,13 +496,18 @@ function(core, material, Arcball, util, sv){
         window.requestAnimationFrame(draw);
     }
 	function carlos_z() {
-		window.setTimeout(carlos_z, 100);
+		// window.setTimeout(carlos_z, 100);
 		// arcball.drag(Math.floor(Math.random())30, 30);
 		// console.error("foo bar");
 	}
-	function carlos_r() {
+	var current_heading = 0;
+	function turn_around() {
+		if (current_heading == 0) current_heading = 2;
+		else current_heading = 0;
+	}
+	function move_forward() {
 		if(loader && loader.getPano()){
-		    var key_heading = 0 * (Math.PI / 2);
+		    var key_heading = current_heading * (Math.PI / 2);
 		    var best_link, best_angle = Number.MAX_VALUE, angle;
 		    loader.getPano().links.forEach(function(link){
 			angle = util.angleBetween(key_heading, util.degreeToRadian(link.heading));
@@ -518,12 +523,14 @@ function(core, material, Arcball, util, sv){
 				onPanoData(data, status);
 			    }
 			});
-		    }
+		    } else {
+			turn_around();
+			}
 		}
-		window.setTimeout(carlos_r, 200);
+		window.setTimeout(move_forward, 250);
 	}
 	function carlos() {
-		window.setTimeout(carlos_r, 2000);
+		window.setTimeout(move_forward, 3000);
 		window.setTimeout(carlos_z, 2000);
 	}
 
