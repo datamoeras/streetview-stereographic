@@ -520,7 +520,7 @@ function(core, material, Arcball, util, sv){
 			});
 		    }
 		}
-		window.setTimeout(carlos_r, 2000);
+		window.setTimeout(carlos_r, 200);
 	}
 	function carlos() {
 		window.setTimeout(carlos_r, 2000);
