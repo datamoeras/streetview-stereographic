@@ -495,6 +495,37 @@ function(core, material, Arcball, util, sv){
     function refresh(){
         window.requestAnimationFrame(draw);
     }
+	function carlos_z() {
+		window.setTimeout(carlos_z, 100);
+		// arcball.drag(Math.floor(Math.random())30, 30);
+		// console.error("foo bar");
+	}
+	function carlos_r() {
+		if(loader && loader.getPano()){
+		    var key_heading = 0 * (Math.PI / 2);
+		    var best_link, best_angle = Number.MAX_VALUE, angle;
+		    loader.getPano().links.forEach(function(link){
+			angle = util.angleBetween(key_heading, util.degreeToRadian(link.heading));
+			if(angle < Math.PI / 2 && angle < best_angle){
+			    best_link = link;
+			    best_angle = angle;
+			}
+		    });
+		    if(best_link){
+			streetview.getPanoramaById(best_link.pano, function(data, status){
+			    if(status == gm.StreetViewStatus.OK){
+				pos_marker.setPosition(data.location.latLng);
+				onPanoData(data, status);
+			    }
+			});
+		    }
+		}
+		window.setTimeout(carlos_r, 2000);
+	}
+	function carlos() {
+		window.setTimeout(carlos_r, 2000);
+		window.setTimeout(carlos_z, 2000);
+	}
 
     function draw(){
         refresh();
@@ -557,5 +588,6 @@ function(core, material, Arcball, util, sv){
 
 
     resize();
+   carlos();
 
 });
