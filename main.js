@@ -61,9 +61,11 @@ function(core, material, Arcball, util, sv){
     ,   fullwindow_toggle = document.getElementById("fullwindow")
     ,   about = document.getElementById("about")
     ,   about_toggle = document.getElementById("about-toggle")
+    ,   btn_turn = document.getElementById("btn_turn")
     ,   about_backdrop = document.getElementById("about-backdrop")
     ,   no_webgl = document.getElementById("no-webgl")
     ;
+    btn_turn.onclick=turn_around;
 
 
     // Setup GoogMaps
@@ -509,6 +511,7 @@ function(core, material, Arcball, util, sv){
 		if(loader && loader.getPano()){
 		    var key_heading = current_heading * (Math.PI / 2);
 		    var best_link, best_angle = Number.MAX_VALUE, angle;
+		    var old_loc = loader.getPano().location.latLng;
 		    loader.getPano().links.forEach(function(link){
 			angle = util.angleBetween(key_heading, util.degreeToRadian(link.heading));
 			if(angle < Math.PI / 2 && angle < best_angle){
@@ -517,19 +520,40 @@ function(core, material, Arcball, util, sv){
 			}
 		    });
 		    if(best_link){
-			streetview.getPanoramaById(best_link.pano, function(data, status){
-			    if(status == gm.StreetViewStatus.OK){
-				pos_marker.setPosition(data.location.latLng);
-				onPanoData(data, status);
-			    }
+			    streetview.getPanoramaById(best_link.pano, function(data, status){
+				    if(status == gm.StreetViewStatus.OK){
+				       if (data.location.latLng == old_loc) {
+					     alert("locatie niet veranderd: " + data.location.latLng + "; turn around" );
+					     turn_around();
+				       }
+					    pos_marker.setPosition(data.location.latLng);
+					    onPanoData(data, status);
+					    /*
+					       alert("dead end? turn around");
+					       turn_around();
+					       } else {
+					       console.error("verplaatst naar" + loader.getPano().location.latLng);
+					       }
+
+					     */
+				    } else {
+					// alert("getPanById != OK " + data);
+					}
 			});
 		    } else {
+			// alert("no best_link; turn around");
 			turn_around();
-			}
+		    }
 		}
 		window.setTimeout(move_forward, 250);
 	}
 	function carlos() {
+		window.setTimeout(function() {
+			var loc = loader.getPano().location.latLng;
+			if (loc == loc) {
+				// alert("ok: " + loader.getPano().location.latLng);
+			}
+		}, 3000);
 		window.setTimeout(move_forward, 3000);
 		window.setTimeout(carlos_z, 2000);
 	}
