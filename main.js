@@ -536,13 +536,14 @@ function(core, material, Arcball, util, sv){
 							// alert("locatie niet veranderd: " + data.location.latLng + "; turn around" );
 							turn_around();
 						}
-						/*
 						   var llg = data.location.latLng;
 						   var d1 = ( llg.lat() - old_loc.lat() ) / 4;
 						   var d2 = ( llg.lng() - old_loc.lng() ) / 4;
-						   data.location.latLng.lat(llg.lat() - d1);
-						   data.location.latLng.lng(llg.lng() - d2);
-						 */
+						   var new_loc = new google.maps.LatLng (llg.lat() - d1, llg.lng() - d2);
+						   // data.setLocation(new_loc);
+						   // data.location.latLng.lat(llg.lat() - d1);
+						   // data.location.latLng.lng(llg.lng() - d2);
+						   // alert(new_loc);
 						pos_marker.setPosition(data.location.latLng);
 						onPanoData(data, status);
 					}
@@ -550,13 +551,14 @@ function(core, material, Arcball, util, sv){
 		    } else
 				turn_around();
 		}
-		window.setTimeout(move_forward, 250);
 	}
 
     function draw(){
         refresh();
 
         var time = (Date.now() - start_time) / 1000;
+
+		if ((Date.now() % 10) == 0) move_forward();
 
         gl.viewport(0, 0, canvas.width, canvas.height);
 
