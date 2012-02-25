@@ -557,20 +557,28 @@ function(core, material, Arcball, util, sv){
 
 	var zoom_dir = -1;
 	var foo_dir = 1;
+	var bar_dir = 1;
     function adjust_pano_zoom(){
+		if (paused) return;
 
-		if (arcball.center.x > 2.2) 
+		if (arcball.orientation.x > .99) 
+			bar_dir = -1;
+		else if (arcball.orientation.x < .4) 
+			bar_dir = 1;
+
+		if (arcball.center.x > .99) 
 			foo_dir = -1;
-		else if (arcball.center.x < 1.6) 
+		else if (arcball.center.x < .4) 
 			foo_dir = 1;
 
-		if (pano_zoom_goal > 2.2) 
+		if (pano_zoom_goal > 2.3) 
 			zoom_dir = -1;
-		else if (pano_zoom_goal < 0.8) 
+		else if (pano_zoom_goal < 1.1) 
 			zoom_dir = 1;
-		pano_zoom_goal += ( .001 * zoom_dir );
 
-		arcball.center.x += ( .01 * foo_dir );
+		pano_zoom_goal += ( .001 * zoom_dir );
+		// arcball.center.x += ( .01 * foo_dir );
+		arcball.orientation.x += ( .001 * bar_dir );
 	}
     function draw(){
         refresh();
