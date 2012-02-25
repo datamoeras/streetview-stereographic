@@ -512,11 +512,6 @@ function(core, material, Arcball, util, sv){
     function refresh(){
         window.requestAnimationFrame(draw);
     }
-	function carlos_z() {
-		// window.setTimeout(carlos_z, 100);
-		// arcball.drag(Math.floor(Math.random())30, 30);
-		// console.error("foo bar");
-	}
 	var current_heading = 0;
 	function turn_around() {
 		if (current_heading == 0) current_heading = 2;
@@ -535,41 +530,27 @@ function(core, material, Arcball, util, sv){
 			}
 		    });
 		    if(best_link){
-			    streetview.getPanoramaById(best_link.pano, function(data, status){
-				    if(status == gm.StreetViewStatus.OK){
-				       if (data.location.latLng == old_loc) {
-					     alert("locatie niet veranderd: " + data.location.latLng + "; turn around" );
-					     turn_around();
-				       }
-				       /*
-				       var llg = data.location.latLng;
-				       var d1 = ( llg.lat() - old_loc.lat() ) / 200000;
-				       var d2 = ( llg.lng() - old_loc.lng() ) / 200000;
-				       data.location.latLng.lat(llg.lat() - d1);
-				       data.location.latLng.lng(llg.lng() - d2);
-				       */
-					    pos_marker.setPosition(data.location.latLng);
-					    onPanoData(data, status);
-				    } else {
-					// alert("getPanById != OK " + data);
+				streetview.getPanoramaById(best_link.pano, function(data, status){
+					if(status == gm.StreetViewStatus.OK){
+						if (data.location.latLng == old_loc) {
+							// alert("locatie niet veranderd: " + data.location.latLng + "; turn around" );
+							turn_around();
+						}
+						/*
+						   var llg = data.location.latLng;
+						   var d1 = ( llg.lat() - old_loc.lat() ) / 4;
+						   var d2 = ( llg.lng() - old_loc.lng() ) / 4;
+						   data.location.latLng.lat(llg.lat() - d1);
+						   data.location.latLng.lng(llg.lng() - d2);
+						 */
+						pos_marker.setPosition(data.location.latLng);
+						onPanoData(data, status);
 					}
-			});
-		    } else {
-			// alert("no best_link; turn around");
-			turn_around();
-		    }
+				});
+		    } else
+				turn_around();
 		}
 		window.setTimeout(move_forward, 250);
-	}
-	function carlos() {
-		window.setTimeout(function() {
-			var loc = loader.getPano().location.latLng;
-			if (loc == loc) {
-				// alert("ok: " + loader.getPano().location.latLng);
-			}
-		}, 3000);
-		window.setTimeout(move_forward, 3000);
-		window.setTimeout(carlos_z, 2000);
 	}
 
     function draw(){
@@ -633,6 +614,5 @@ function(core, material, Arcball, util, sv){
 
 
     resize();
-   carlos();
-
+	window.setTimeout(move_forward, 2000);
 });
