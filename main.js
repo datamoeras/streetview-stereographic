@@ -519,46 +519,66 @@ function(core, material, Arcball, util, sv){
 	}
 	function move_forward() {
 		if(loader && loader.getPano() && !paused){
-		    var key_heading = current_heading * (Math.PI / 2);
-		    var best_link, best_angle = Number.MAX_VALUE, angle;
-		    var old_loc = loader.getPano().location.latLng;
-		    loader.getPano().links.forEach(function(link){
+			var key_heading = current_heading * (Math.PI / 2);
+			var best_link, best_angle = Number.MAX_VALUE, angle;
+			var old_loc = loader.getPano().location.latLng;
+			loader.getPano().links.forEach(function(link){
 			angle = util.angleBetween(key_heading, util.degreeToRadian(link.heading));
 			if(angle < Math.PI / 2 && angle < best_angle){
-			    best_link = link;
-			    best_angle = angle;
+				best_link = link;
+				best_angle = angle;
 			}
-		    });
-		    if(best_link){
+			});
+			if(best_link){
 				streetview.getPanoramaById(best_link.pano, function(data, status){
 					if(status == gm.StreetViewStatus.OK){
 						if (data.location.latLng == old_loc) {
 							// alert("locatie niet veranderd: " + data.location.latLng + "; turn around" );
 							turn_around();
 						}
+						/*
 						   var llg = data.location.latLng;
-						   var d1 = ( llg.lat() - old_loc.lat() ) / 4;
-						   var d2 = ( llg.lng() - old_loc.lng() ) / 4;
-						   var new_loc = new google.maps.LatLng (llg.lat() - d1, llg.lng() - d2);
-						   // data.setLocation(new_loc);
-						   // data.location.latLng.lat(llg.lat() - d1);
-						   // data.location.latLng.lng(llg.lng() - d2);
-						   // alert(new_loc);
-						pos_marker.setPosition(data.location.latLng);
-						onPanoData(data, status);
+						   var d1 = ( llg.lat() - old_loc.lat() ) / 2;
+						   var d2 = ( llg.lng() - old_loc.lng() ) / 2;
+						   var new_loc = new google.maps.LatLng (llg.lat() - ( d1 * 1 ), llg.lng() - ( d2 * 1 ) );
+						   var tst_loc = new google.maps.LatLng (llg.lat(), llg.lng());
+						   // streetview.getPanoramaByLocation(tst_loc, 50, onPanoData);
+						*/
+
+					   pos_marker.setPosition(data.location.latLng);
+					   onPanoData(data, status);
+
 					}
 				});
-		    } else
+			} else
 				turn_around();
 		}
 	}
 
+	var zoom_dir = -1;
+	var foo_dir = 1;
+    function adjust_pano_zoom(){
+
+		if (arcball.center.x > 2.2) 
+			foo_dir = -1;
+		else if (arcball.center.x < 1.6) 
+			foo_dir = 1;
+
+		if (pano_zoom_goal > 2.2) 
+			zoom_dir = -1;
+		else if (pano_zoom_goal < 0.8) 
+			zoom_dir = 1;
+		pano_zoom_goal += ( .001 * zoom_dir );
+
+		arcball.center.x += ( .01 * foo_dir );
+	}
     function draw(){
         refresh();
 
         var time = (Date.now() - start_time) / 1000;
 
 		if ((Date.now() % 10) == 0) move_forward();
+		if ((Date.now() % 1) == 0) adjust_pano_zoom();
 
         gl.viewport(0, 0, canvas.width, canvas.height);
 
