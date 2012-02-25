@@ -25,22 +25,26 @@ function(core, material, Arcball, util, sv){
     }
 
     var start_locations = [
+    	/*
         "o=0,0,0,1&p=54.21050,-2.36962&z=1.656&mt=hybrid", // Ribblehead Viaduct
         "o=0,0,0,1&p=35.66007,139.69978", // Shibuya
         "o=0,0,0,1&p=-23.61071,-46.59209", // Heliopolis
         "o=0,0,0,1&p=22.33605,114.18748", // Kowloon
         "o=0,0,0,1&p=22.27844,114.16438", // Hong Kong
+	*/
         "o=0,0,0,1&p=33.93011,-118.28101", // LA 110
-        "o=0,0,0,1&p=37.79071,-122.40561", // SF Chinatown
         "o=0,0,0,1&p=40.70911,-74.01057", // NYC Zuccotti
-        "o=0,0,0,1&p=35.01639,135.68119", // Kyoto Arashiyama
-        "o=0,0,0,1&p=25.03293,121.56480&z=1.553", // Taipei 101
-        "o=0,0,0.8,0.6&z=1.484&p=38.21072,140.96991", // Sendai Reconstruction
         "o=0,0,0,1&z=1.623&p=19.12395,-155.75757", // Hawaii Ocean View
+        "o=0,0,0,1&p=25.03293,121.56480&z=1.553&mz=18&mt=hybrid&fw=1&c=1&fs=5d000001007003000000000000003a9b896105e32d80d13554b9d34bbfd90bf88bb586e732cb3c72e57b832c2ec8a63cf3700f3945d75fc5ed2d2c2ed102355a97ae79325235a81737fdaf688a59a07d58a81fb2579222b45a814e5c46bc7543e798bad2317bd784693de2e459d9db7518f7f3559caddf93c4b044c981f5913d8e21a7a7ef6187106cd8fea3053ab9999a7f2338b2798af18c861daf56ddd77d74461df8caf161d0ff3a7e702ba17f7932b20fbdffb5f6eedce51102567c25d377676316200caf23e0d8bb40f03357cbc91c5913c2c0e6d53019da4467512ca8bfe3f0d6b84fdc8693a775a0f908e049bf3ccbaf80344b8f70aba806af5afb2ef0356af33fc261ba5c7d831e54071f7ddb96c0ab4114f3def93cfb104e7aa26da32f701f50952a48340b290dc25df292779bf52a57999a9c7c6cc4cef349eaa3d09191b37eecb6608d8b96cbf242576e0f932c80bf0f6d1dc9e2a9aab0bc7f6390bf2c1d3ba0545b679ca38fdf55e01fe23e0f8388be7caa0334bbe9c4d32f224066888d17a604d00aa9ef6d142831b05bfb8fada3862a09d77442e727c8ff0cb2a66b8acb8f0083f4df1123f35933527a9533d93147310eefce8605012c556885016bd967538de764b8dea03b796f3160f4bd09753414fff5973bb3", // Taipei 101
+	/*
+        "o=0,0,0,1&p=37.79071,-122.40561", // SF Chinatown
+        "o=0,0,0,1&p=35.01639,135.68119", // Kyoto Arashiyama
+        "o=0,0,0.8,0.6&z=1.484&p=38.21072,140.96991", // Sendai Reconstruction
         "o=0,0,0,1&z=1.361&p=23.64225,119.51382", // Siyu Township
         "o=0,0,0,1&z=1.591&p=35.69935,139.77133", // Akihabara
         "o=0,0,0,1&z=1.566&p=35.31670,139.53571", // Nara Daibutsu
         "o=0,0,0,1&z=1.505&mz=18&p=51.50187,-0.11538", // London Leake St
+	*/
         "o=0,0,0,1&z=1.535&p=36.86184,-5.17948" // Setenil de las Bodegas
     ];
 
@@ -62,10 +66,21 @@ function(core, material, Arcball, util, sv){
     ,   about = document.getElementById("about")
     ,   about_toggle = document.getElementById("about-toggle")
     ,   btn_turn = document.getElementById("btn_turn")
+    ,   btn_pause = document.getElementById("btn_pause")
     ,   about_backdrop = document.getElementById("about-backdrop")
     ,   no_webgl = document.getElementById("no-webgl")
     ;
     btn_turn.onclick=turn_around;
+    var paused = false;
+    btn_pause.onclick=function(){ 
+    	if (paused) {
+		btn_pause.innerHTML = 'pause';
+		paused = false;
+	} else {
+		btn_pause.innerHTML = 'play';
+		paused = true;
+	}
+    };
 
 
     // Setup GoogMaps
@@ -508,7 +523,7 @@ function(core, material, Arcball, util, sv){
 		else current_heading = 0;
 	}
 	function move_forward() {
-		if(loader && loader.getPano()){
+		if(loader && loader.getPano() && !paused){
 		    var key_heading = current_heading * (Math.PI / 2);
 		    var best_link, best_angle = Number.MAX_VALUE, angle;
 		    var old_loc = loader.getPano().location.latLng;
@@ -526,16 +541,15 @@ function(core, material, Arcball, util, sv){
 					     alert("locatie niet veranderd: " + data.location.latLng + "; turn around" );
 					     turn_around();
 				       }
+				       /*
+				       var llg = data.location.latLng;
+				       var d1 = ( llg.lat() - old_loc.lat() ) / 200000;
+				       var d2 = ( llg.lng() - old_loc.lng() ) / 200000;
+				       data.location.latLng.lat(llg.lat() - d1);
+				       data.location.latLng.lng(llg.lng() - d2);
+				       */
 					    pos_marker.setPosition(data.location.latLng);
 					    onPanoData(data, status);
-					    /*
-					       alert("dead end? turn around");
-					       turn_around();
-					       } else {
-					       console.error("verplaatst naar" + loader.getPano().location.latLng);
-					       }
-
-					     */
 				    } else {
 					// alert("getPanById != OK " + data);
 					}
